@@ -1,5 +1,5 @@
 /*
-sdb
+By Stephen Borsay for Cloudboard.cc  ---  https://github.com/sborsay
 */
 
 #include <Wire.h>
@@ -99,8 +99,6 @@ void loop() {
   display.setTextSize(2);
   display.setCursor(70, 45);
   display.print(lightLevel/10); //normalize lux to same magnitude as enviro readings 
-
-
   
   display.display(); 
 }
