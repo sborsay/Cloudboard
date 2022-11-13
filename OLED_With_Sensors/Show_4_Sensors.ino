@@ -83,7 +83,7 @@ void loop() {
  //display.print("%"); 
 
     
-  // display humidity2 
+  // display resistence
   display.setTextSize(1);
   display.setCursor(70, 0);
   display.print("Resistence:");
@@ -92,7 +92,7 @@ void loop() {
   display.print(potValue);  //normalize 24 turn 10k trimmer to keep magigniture in line
 
 
-    // display Photoresistor
+  // display light level
   display.setTextSize(1);
   display.setCursor(70,35);
   display.print("Lux Level:");
