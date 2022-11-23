@@ -1,6 +1,6 @@
 # Cloudboard
 
-OnBoard Cloudboard:
+OnBoard CloudBoard:
 
 ESP32-WROVER-E w/onboard WiFi </br>
 3 LED's</br>
