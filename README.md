@@ -9,3 +9,5 @@ ESP32-WROVER-E w/onboard WiFi </br>
 DHT11 Environmental sensor</br>
 10K Rotary Trimmer Potentiometer</br>
 Photoresistor
+
+![cbwhite](https://user-images.githubusercontent.com/16296900/203607850-e91af435-b0a9-403a-8bf0-2baf03de9c93.jpg)
