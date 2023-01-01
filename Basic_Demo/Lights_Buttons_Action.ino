@@ -23,34 +23,20 @@ Pin GPIO 14
 Button 1 GPIO 35;     //Button1, active low, GPIO35 
 Button 2 GPIO 25;     //Button1, active low, GPIO25      
 ---------------------
+
+DHT11 temperature and humidity tester on Pin 15
+
 */
-
-
-#include <Wire.h>
-#include <Adafruit_GFX.h>
-#include <Adafruit_SSD1306.h>
-#include <Adafruit_Sensor.h>
-#include <DHT.h>
-
-#define SCREEN_WIDTH 128 // OLED display width, in pixels
-#define SCREEN_HEIGHT 64 // OLED display height, in pixels
-
-// Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
-Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
-
-
 
 int blue = 5;
 int green = 18;
 int yellow = 19;
-//int potOhms;
+int ledDelay;
 //int delay1;
 
-//int potPin = 32;   //Potentiometer on GPIO 32
-int potOhms = analogRead(32);
-
+int potPin = 32;   //Potentiometer on GPIO 32
 int lightLevel;
-const int sensorPin = 33; //GL5528 phtoresistor on GPIO23
+const int sensorPin = 33; //GL5528 phtoresistor on GPIO33
 
 const int button1 = 35;     //Button1 Top, active high, GPIO35 
 const int button2 = 25;          //and 32 is bottom button, 32(but2)  GPIO32
@@ -61,7 +47,7 @@ int buttonState2 = 0;         // variable for reading the pushbutton status
 
 //----------for DHT11 Enviro Sensor on Board-------------
 
-// #include "DHT.h"
+ #include "DHT.h"
 
 #define DHTPIN 15     // Digital pin connected to the DHT sensor
 
@@ -93,16 +79,6 @@ void setup() {
       pinMode(button2, INPUT);
 
       dht.begin();
-      Serial.begin(115200);
-
-      // initialize with the I2C address 0x3C
-    if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
-    Serial.println(F("SSD1306 allocation failed"));
-    for(;;);
-  }
-  delay(2000);
-  display.clearDisplay();
-  display.setTextColor(WHITE);
        
      Serial.begin(115200);
 }
@@ -110,13 +86,39 @@ void setup() {
 // the loop function runs over and over again forever
 void loop() {
     //delay(1000); //delay for DHT if needed
+  
+  //Photoresistor GL5528 tester
     lightLevel = analogRead(sensorPin);
     Serial.println((String)"The Photoresistor light level is: "+ lightLevel);
 
 
+//LED chaser tester for 3 colored LEDs
+ ledDelay = analogRead(potPin); //potentiomter on GPIO 32 potPin
+ digitalWrite(blue, HIGH);
+  digitalWrite(green, LOW);
+  digitalWrite(yellow, LOW);
+  delay(ledDelay);
+  digitalWrite(blue, LOW);
+  digitalWrite(green, HIGH);
+  digitalWrite(yellow, LOW);
+  delay(ledDelay);
+  digitalWrite(blue, LOW);
+  digitalWrite(green, LOW);
+  digitalWrite(yellow, HIGH);
+  delay(ledDelay);
 
-  //clear OLED display
-  display.clearDisplay();
+// 2-pushbutton tester section
+  
+   buttonState1 = digitalRead(button1) ;
+   buttonState2 = digitalRead(button2) ;
+   
+   if(buttonState1 == LOW) {
+     Serial.println("button 1 pressed " ) ;
+   }
+
+    if(buttonState2 == LOW) {
+     Serial.println("button 2 pressed " ) ;
+   }
 
    //-----------DHT tester Section
 
@@ -132,62 +134,22 @@ void loop() {
     return;
   }
 
+  // Compute heat index in Fahrenheit (the default)
+  float hif = dht.computeHeatIndex(f, h);
+  // Compute heat index in Celsius (isFahreheit = false)
+  float hic = dht.computeHeatIndex(t, h, false);
 
-  // display Photoresistor
-  display.setTextSize(1);
-  display.setCursor(0,0);
-  display.print("Light Level: ");
-  //display.setTextSize(2);
-  display.setCursor(0,8);
-  display.print(lightLevel/10); //normalize lux to same magnitude as enviro readings 
-  display.print(" ");
-  display.setTextSize(1);
-  display.cp437(true);
-  display.write(167);
-  display.setTextSize(1);
-  display.print(" lux");
-
-  
-  // display Photoresistor2
-  display.setTextSize(1);
-  display.setCursor(0,15);
-  display.print("Light Level: ");
-  //display.setTextSize(2);
-  display.setCursor(0,25);
-  display.print(lightLevel/10); //normalize lux to same magnitude as enviro readings 
-  display.print(" ");
-  display.setTextSize(1);
-  display.cp437(true);
-  display.write(167);
-  display.setTextSize(1);
-  display.print(" lux");
-
-    // display Potentiomter resistence
-  Serial.println(potOhms/10); //normalize pot value for 
-  display.setTextSize(1);
-  display.setCursor(0, 32);
-  display.print("Potentiometer Resist: ");
- //display.setTextSize(2);
- // display.setCursor(0, 45);
-  //display.setTextColor(BLACK, WHITE); // 'inverted' text
-  display.print(potOhms/10);
-  //display.write(2126);
-  display.print("  Ohms"); 
-
-      // display Potentiomter resistence2
-  Serial.println(potOhms/10); //normalize pot value for 
-  display.setTextSize(1);
-  display.setCursor(0, 50);
-  display.print("Potentiometer Resist: ");
- //display.setTextSize(2);
- // display.setCursor(0, 45);
-  //display.setTextColor(BLACK, WHITE); // 'inverted' text
-  display.print(potOhms/10);
-  //display.write(2126);
-  display.print("  Ohms"); 
-
-  display.display(); 
-  delay(1000); //delay so readimgs don't flutter
+  Serial.print(F("Humidity: "));
+  Serial.print(h);
+  Serial.print(F("%  Temperature: "));
+  Serial.print(t);
+  Serial.print(F("°C "));
+  Serial.print(f);
+  Serial.print(F("°F  Heat index: "));
+  Serial.print(hic);
+  Serial.print(F("°C "));
+  Serial.print(hif);
+  Serial.println(F("°F"));
 
   //-------End DHT tester section
   
