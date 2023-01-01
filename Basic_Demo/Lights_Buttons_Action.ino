@@ -94,6 +94,7 @@ void loop() {
 
 //LED chaser tester for 3 colored LEDs
  ledDelay = analogRead(potPin); //potentiomter on GPIO 32 potPin
+ Serial.println((String)"The Potentiometer is set at: "+  ledDelay);
  digitalWrite(blue, HIGH);
   digitalWrite(green, LOW);
   digitalWrite(yellow, LOW);
